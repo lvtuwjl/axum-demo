@@ -1,0 +1,23 @@
+[package]
+name = "demo1"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#hh = {path = "ff3/hh"}
+hex = "*"
+axum = "0.6.0"
+tower-http = {version = "0.3.4", features= ["trace"]}
+async-trait = "*"
+hmac-sha256 = "1.1.6"
+digest = "*"
+#mio = "0.8.5"
+sled = "*"
+#libc = "*"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.68"
+tokio = { version = "1.0", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
