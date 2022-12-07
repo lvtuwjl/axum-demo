@@ -18,7 +18,7 @@ pub async fn get_user() -> impl IntoResponse {
         .unwrap()
         .to_vec();
     let u: User = serde_json::from_slice(&user).unwrap();
-    tracing::debug!("get_user service {}","get_user");
+    tracing::debug!("get_user service {}", "get_user");
 
     (StatusCode::OK, Json(u))
 }
@@ -80,7 +80,6 @@ pub struct User {
 }
 
 pub async fn get_options() -> impl IntoResponse {
-
-    tracing::debug!("get_options service {}","get_options");
+    tracing::debug!("get_options service {}", "get_options");
     (StatusCode::CREATED, "jda")
 }
