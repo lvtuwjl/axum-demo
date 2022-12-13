@@ -20,7 +20,13 @@ pub async fn get_user() -> impl IntoResponse {
     let u: User = serde_json::from_slice(&user).unwrap();
     tracing::debug!("get_user service {}", "get_user");
 
-    (StatusCode::OK, Json(u))
+    let resp = Response {
+        code: StatusCode::OK.as_u16() as i64,
+        message: StatusCode::OK.to_string(),
+        data: u,
+    };
+
+    (StatusCode::OK, Json(resp))
 }
 
 pub async fn create_user(
@@ -77,6 +83,13 @@ pub struct User {
     sex: String,
     created: u64,
     updated: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Response<T: Sized /*+ IntoResponse*/> {
+    code: i64,
+    message: String,
+    data: T,
 }
 
 pub async fn get_options() -> impl IntoResponse {

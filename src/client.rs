@@ -1,21 +1,19 @@
 //! http client use reqwest
 //!
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt::Debug;
-use serde::{Deserialize, Serialize};
 
 pub async fn run_get() -> Result<(), reqwest::Error> {
     let res = reqwest::get("http://localhost:8888/wechat/js-sdk/sign").await?;
     let body = res.text().await?;
     println!("body = {:?}", body);
 
-    let d:Body = serde_json::from_str(&body).unwrap();
+    let d: Body = serde_json::from_str(&body).unwrap();
     println!("body:{:?}", d);
 
     Ok(())
 }
-
-
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Body {

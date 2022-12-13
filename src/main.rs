@@ -7,6 +7,7 @@ mod middleware;
 mod router;
 mod service;
 mod util;
+mod yew;
 
 use crate::cli::Cli;
 use tracing_subscriber::{
@@ -17,7 +18,7 @@ use tracing_subscriber::{
 pub type Result<T> = std::result::Result<T, failure::Error>;
 
 #[tokio::main]
-async fn main() ->reqwest::Result<()>{
+async fn main() -> reqwest::Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(
             EnvFilter::builder()
@@ -32,7 +33,7 @@ async fn main() ->reqwest::Result<()>{
     }
 
     let res = client::run_get().await;
-    println!("res:{:?}",res);
+    println!("res:{:?}", res);
 
     Ok(())
 }
