@@ -1,22 +1,23 @@
 #![allow(unused)]
 mod cli;
+mod client;
 mod db;
 mod error;
 mod middleware;
+mod router;
 mod service;
 mod util;
-mod router;
 
+use crate::cli::Cli;
 use tracing_subscriber::{
     filter::{EnvFilter, LevelFilter},
     fmt::layer,
 };
-use crate::cli::Cli;
 
 pub type Result<T> = std::result::Result<T, failure::Error>;
 
 #[tokio::main]
-async fn main() {
+async fn main() ->reqwest::Result<()>{
     tracing_subscriber::fmt()
         .with_env_filter(
             EnvFilter::builder()
@@ -27,6 +28,11 @@ async fn main() {
 
     let mut cli = Cli::new();
     if let Err(e) = cli.run().await {
-        println!("Error: {}",e);
+        println!("Error: {}", e);
     }
+
+    let res = client::run_get().await;
+    println!("res:{:?}",res);
+
+    Ok(())
 }
