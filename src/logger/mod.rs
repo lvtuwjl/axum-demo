@@ -117,7 +117,7 @@ pub fn init() -> Result<(WorkerGuard)> {
         .pretty()
         .json()
         .with_timer(LocalTimer)
-        .with_writer(std::io::stdout());
+        .with_writer(std::io::stdout);
     // .with_writer(non_blocking_console);
     // .with_filter(EnvFilter::new("info"));
 
