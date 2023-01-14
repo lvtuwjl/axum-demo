@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 
 pub async fn run_get() -> Result<(), reqwest::Error> {
-    let res = reqwest::get("http://localhost:8083/user").await?;
+    let res = reqwest::get("https://dev-api.vland.live/wechat/js-sdk/sign").await?;
     let body = res.text().await?;
     println!("body = {:?}", body);
 
@@ -16,7 +16,7 @@ pub async fn run_get() -> Result<(), reqwest::Error> {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Body{
+struct Body {
     code: i64,
     message: String,
     data: Data,
@@ -49,3 +49,17 @@ struct Data {
 //
 //     Ok(())
 // }
+
+#[cfg(test)]
+mod test {
+    #[tokio::main]
+    async fn get_user() {
+        let res = super::run_get().await;
+        println!("res:{:?}", res);
+    }
+
+    #[test]
+    fn test() {
+        get_user()
+    }
+}

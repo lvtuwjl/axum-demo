@@ -1,4 +1,6 @@
-use super::*;
+use crate::middleware::auth::Auth;
+use crate::middleware::cors::{cors, options};
+use crate::service::user::*;
 
 use axum::{
     middleware::{from_extractor, from_fn, map_request, map_response},
@@ -7,12 +9,6 @@ use axum::{
 };
 use std::net::SocketAddr;
 
-use middleware::{
-    auth::Auth,
-    cors::{cors, options},
-};
-use service::user::*;
-
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{
     filter::{EnvFilter, LevelFilter},
@@ -20,16 +16,6 @@ use tracing_subscriber::{
 };
 
 pub async fn start() {
-    // initialize tracing
-    // tracing_subscriber::fmt::init();
-    // tracing_subscriber::fmt()
-    //     .with_env_filter(
-    //         EnvFilter::builder()
-    //             .with_default_directive(LevelFilter::DEBUG.into())
-    //             .from_env_lossy(),
-    //     )
-    //     .init();
-
     // build our application with a route
     // let app = Router::new();
 

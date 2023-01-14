@@ -1,39 +1,30 @@
+// #![feature(negative_impls)] unstable nightly use for Sync trait
 #![allow(unused)]
 mod cli;
-mod client;
 mod db;
 mod error;
+mod logger;
 mod middleware;
+mod response;
 mod router;
 mod service;
+mod test;
 mod util;
-mod yew;
 
-use crate::cli::Cli;
-use tracing_subscriber::{
-    filter::{EnvFilter, LevelFilter},
-    fmt::layer,
-};
+use crate::test::client;
+use cli::Cli;
 
 pub type Result<T> = std::result::Result<T, failure::Error>;
 
 #[tokio::main]
 async fn main() -> reqwest::Result<()> {
-    tracing_subscriber::fmt()
-        .with_env_filter(
-            EnvFilter::builder()
-                .with_default_directive(LevelFilter::DEBUG.into())
-                .from_env_lossy(),
-        )
-        .init();
+    // 初始化日志
+    let _guard = logger::init();
 
     let mut cli = Cli::new();
     if let Err(e) = cli.run().await {
         println!("Error: {}", e);
     }
-
-    let res = client::run_get().await;
-    println!("res:{:?}", res);
 
     Ok(())
 }

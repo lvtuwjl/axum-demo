@@ -1,5 +1,5 @@
 [package]
-name = "demo1"
+name = "axum-demo"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,7 +13,6 @@ hex = "*"
 axum = "0.6.0"
 tower-http = {version = "0.3.4", features= ["trace"]}
 async-trait = "*"
-hmac-sha256 = "1.1.6"
 digest = "*"
 #mio = "0.8.5"
 sled = "*"
@@ -22,7 +21,41 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.68"
 tokio = { version = "1.0", features = ["full"] }
 tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter","json","local-time"] }
+tracing-appender = "0.2.2"
 reqwest = {version = "0.11.13",features = ["json"]}
 futures = "0.3.25"
-yew = "0.20.0"
+#yew = "0.20.0"
+#mongodb = "2.3.1"
+
+[dependencies.time]
+version = "0.3.17"
+
+[dependencies.log]
+version = "0.4.17"
+
+[dependencies.chrono]
+version = "0.4.23"
+
+[dependencies.uuid]
+version = "1.2.2"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
+
+# test测试构建使用 cargo build不会使用此依赖包
+[dev-dependencies.hmac-sha256]
+version = "1.1.6"
+
+[profile.dev]
+#opt-level = 2
+
+[profile.release]
+#opt-level = 3 #编译等级 默认是3 性能好，构建时间长
+opt-level = 'z'     # Optimize for size.
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = 'abort'     # Abort on panic
+strip = true        # Strip symbols from binary*

@@ -1,15 +1,24 @@
 // hash algorithm
-use hmac_sha256::Hash;
-
-pub fn sha256(input: &[u8]) -> String {
-    let h = Hash::hash(input);
-
-    let out = hex::encode(h);
-    return out;
-}
+// use hmac_sha256::Hash;
+//
+// pub fn sha256(input: &[u8]) -> String {
+//     let h = Hash::hash(input);
+//
+//     let out = hex::encode(h);
+//     return out;
+// }
 
 #[test]
 fn test_sha256() {
+    use hmac_sha256::Hash;
+
+    pub fn sha256(input: &[u8]) -> String {
+        let h = Hash::hash(input);
+
+        let out = hex::encode(h);
+        return out;
+    }
+
     let l = "a".as_bytes();
     let hs = sha256(l);
 
