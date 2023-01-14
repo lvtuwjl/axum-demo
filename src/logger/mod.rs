@@ -107,18 +107,18 @@ impl FormatTime for LocalTimer {
     }
 }
 
-pub fn init() -> Result<(WorkerGuard, WorkerGuard)> {
+pub fn init() -> Result<(WorkerGuard)> {
     let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("debug"));
 
-    let (non_blocking_console, console_guard) = non_blocking(std::io::stdout());
+    // let (non_blocking_console, console_guard) = non_blocking(std::io::stdout());
 
     // 输出到控制台中
     let formatting_layer = fmt::layer()
         .pretty()
         .json()
         .with_timer(LocalTimer)
-        // .with_writer(std::io::stderr);
-        .with_writer(non_blocking_console);
+        .with_writer(std::io::stdout());
+    // .with_writer(non_blocking_console);
     // .with_filter(EnvFilter::new("info"));
 
     // 输出到文件中
@@ -147,5 +147,5 @@ pub fn init() -> Result<(WorkerGuard, WorkerGuard)> {
         .with(file_layer) // 输出日志到log文件
         .init();
 
-    Ok((console_guard, file_guard))
+    Ok((file_guard))
 }
