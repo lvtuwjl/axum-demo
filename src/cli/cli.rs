@@ -29,7 +29,7 @@ impl Cli {
             .get_matches();
 
         if let Some(_) = matches.subcommand_matches("printname") {
-            tracing::info!("app name:{}", "axum-test");
+            tracing::info!("app name:{}", "axum-tests");
         // matches.get_one("")
         } else if let Some(_) = matches.subcommand_matches("printport") {
             tracing::info!("port:{}", "print port");

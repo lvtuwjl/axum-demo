@@ -8,10 +8,8 @@ mod middleware;
 mod response;
 mod router;
 mod service;
-mod test;
 mod util;
 
-use crate::test::client;
 use cli::Cli;
 
 pub type Result<T> = std::result::Result<T, failure::Error>;

@@ -1,7 +1,8 @@
 //! http client use reqwest
 //!
+//!
+// use axum_demo::*;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::fmt::Debug;
 
 pub async fn run_get() -> Result<(), reqwest::Error> {
@@ -82,7 +83,6 @@ mod test {
 
         // Prints [2,3,5,7]
         println!("{}", serde_json::to_string(&nums).unwrap());
-        let gg: i64 = serde_json::from_str("3").unwrap();
 
         assert_eq!(Three, serde_json::from_str("3").unwrap());
     }
