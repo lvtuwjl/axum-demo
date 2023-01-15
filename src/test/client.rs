@@ -62,4 +62,28 @@ mod test {
     fn test() {
         get_user()
     }
+
+    /// serde serialize enum -> number
+    use serde_repr::*;
+
+    #[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
+    #[repr(u8)]
+    enum SmallPrime {
+        Two = 2,
+        Three = 3,
+        Five = 5,
+        Seven = 7,
+    }
+
+    #[test]
+    fn enum_serialize() {
+        use SmallPrime::*;
+        let nums = vec![Two, Three, Five, Seven];
+
+        // Prints [2,3,5,7]
+        println!("{}", serde_json::to_string(&nums).unwrap());
+        let gg: i64 = serde_json::from_str("3").unwrap();
+
+        assert_eq!(Three, serde_json::from_str("3").unwrap());
+    }
 }

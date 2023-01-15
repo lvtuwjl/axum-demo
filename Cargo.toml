@@ -49,6 +49,9 @@ features = [
 [dev-dependencies.hmac-sha256]
 version = "1.1.6"
 
+[dev-dependencies.serde_repr]
+version = "0.1.10"
+
 [profile.dev]
 #opt-level = 2
 
