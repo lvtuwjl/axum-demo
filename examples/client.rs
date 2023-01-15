@@ -89,4 +89,7 @@ mod test {
     }
 }
 
-fn main() {}
+fn main() {
+    // cargo run --example client
+    println!("print example!");
+}
