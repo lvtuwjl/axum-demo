@@ -121,7 +121,7 @@ pub fn init() -> Result<(WorkerGuard)> {
     // .with_writer(non_blocking_console);
     // .with_filter(EnvFilter::new("info"));
 
-    // 输出到文件中
+    // 异步输出到文件中
     let file_appender = rolling::never("logs", "app.log");
     // todo! 如果不是在main函数中，guard必须返回到main()函数中，否则不输出任何信息到日志文件
     let (non_blocking_appender, file_guard) = non_blocking(file_appender);
