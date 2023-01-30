@@ -11,7 +11,7 @@ impl Cli {
     }
 
     pub async fn run(&mut self) -> Result<()> {
-        tracing::debug!("run app");
+        debug!("run app");
         let matches = Command::new("axum-demo111")
             .version("0.1")
             .author("abc.com")
@@ -29,14 +29,14 @@ impl Cli {
             .get_matches();
 
         if let Some(_) = matches.subcommand_matches("printname") {
-            tracing::info!("app name:{}", "axum-tests");
+            info!("app name:{}", "axum-tests");
         // matches.get_one("")
         } else if let Some(_) = matches.subcommand_matches("printport") {
-            tracing::info!("port:{}", "print port");
+            info!("port:{}", "print port");
         } else if let Some(ref matches) = matches.subcommand_matches("startserver") {
-            tracing::info!("server:{}", "start server");
+            info!("server:{}", "start server");
             if let Some(port) = matches.get_one::<String>("port") {
-                tracing::info!("listen port:{}", port);
+                info!("listen port:{}", port);
 
                 // start axum server
                 router::start().await

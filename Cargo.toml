@@ -6,27 +6,76 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-#hh = {path = "ff3/hh"}
-failure = "0.1.8"
-clap = "4.0.29"
-hex = "*"
-axum = "0.6.0"
-tower-http = {version = "0.3.4", features= ["trace"]}
-async-trait = "*"
-digest = "*"
-#mio = "0.8.5"
-sled = "*"
-#libc = "*"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.68"
-tokio = { version = "1.0", features = ["full"] }
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter","json","local-time"] }
-tracing-appender = "0.2.2"
-reqwest = {version = "0.11.13",features = ["json"]}
-futures = "0.3.25"
-#yew = "0.20.0"
-#mongodb = "2.3.1"
+#[dependencies.hh]
+#path = "ff3/hh"
+
+#[dependencies.mio]
+#version = "0.8.5"
+
+#[dependencies.libc]
+#version = "0.2.139"
+
+#[dependencies.yew]
+#version = "0.20.0"
+
+#[dependencies.mongodb]
+#version = "2.3.1"
+
+#[dependencies.tracing]
+#version = "0.1.37"
+
+#[dependencies.tracing-subscriber]
+#version = "0.3.16"
+#features = ["env-filter","json","local-time"]
+
+#[dependencies.tracing-appender]
+#version = "0.2.2"
+
+[dependencies.failure]
+version = "0.1.8"
+
+[dependencies.clap]
+version = "4.1.4"
+
+[dependencies.hex]
+version = "0.4.3"
+
+[dependencies.axum]
+version = "0.6.4"
+
+[dependencies.tower-http]
+version = "0.3.5"
+features= ["trace"]
+
+[dependencies.async-trait]
+version = "0.1.63"
+
+[dependencies.digest]
+version = "0.10.6"
+
+[dependencies.sled]
+version = "0.34.7"
+
+[dependencies.serde]
+version = "1.0.152"
+features = ["derive"]
+
+[dependencies.serde_json]
+version = "1.0.91"
+
+[dependencies.tokio]
+version = "1.25.0"
+features = ["full"]
+
+[dependencies.futures]
+version = "0.3.25"
+
+[dependencies.reqwest]
+version = "0.11.14"
+features = ["json"]
+
+[dependencies.env_logger]
+version = "0.10.0"
 
 [dependencies.time]
 version = "0.3.17"

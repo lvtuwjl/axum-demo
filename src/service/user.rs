@@ -30,7 +30,7 @@ pub async fn get_user(Form(gu): Form<GetUser>) -> impl IntoResponse {
     // let user = db.get(gu.phone.as_bytes()).unwrap().unwrap().to_vec();
 
     let u: User = serde_json::from_slice(&user.unwrap().unwrap().to_vec()).unwrap();
-    tracing::debug!("get_user service {}", "get_user");
+    debug!("get_user service {}", "get_user");
 
     let resp = Response::new(200, "OK".to_string(), Some(u));
     // let resp = Response {
@@ -51,7 +51,7 @@ pub async fn create_user(
 
     // first 查询当前手机号是否已经注册过 已注册直接返回注册
     if let Ok(Some(_)) = db.get(payload.phone.as_bytes()) {
-        tracing::error!("手机号已注册");
+        error!("手机号已注册");
         let err = Error::new(500, String::from("手机号已注册"));
         let res = Response::from(err);
         // let res = Response::new(500, String::from("手机号已注册"), None);
@@ -129,6 +129,6 @@ pub struct User {
 // }
 
 pub async fn get_options() -> impl IntoResponse {
-    tracing::debug!("get_options service {}", "get_options");
+    debug!("get_options service {}", "get_options");
     (StatusCode::CREATED, "jda")
 }

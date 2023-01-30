@@ -1,106 +1,106 @@
 use crate::Result;
-use chrono::prelude::*;
-use chrono::Local;
-use std::collections::BTreeMap;
-use tracing_appender::non_blocking::WorkerGuard;
-use tracing_appender::{non_blocking, rolling};
-use tracing_subscriber::filter::EnvFilter;
-use tracing_subscriber::prelude::*;
-use tracing_subscriber::{
-    fmt,
-    fmt::{format::Writer, layer, time::FormatTime},
-};
+// use chrono::prelude::*;
+// use chrono::Local;
+// use std::collections::BTreeMap;
+// use tracing_appender::non_blocking::WorkerGuard;
+// use tracing_appender::{non_blocking, rolling};
+// use tracing_subscriber::filter::EnvFilter;
+// use tracing_subscriber::prelude::*;
+// use tracing_subscriber::{
+//     fmt,
+//     fmt::{format::Writer, layer, time::FormatTime},
+// };
 
-pub struct CustomLayer;
-
-impl<S> tracing_subscriber::Layer<S> for CustomLayer
-where
-    S: tracing::Subscriber,
-{
-    fn on_event(
-        &self,
-        event: &tracing::Event<'_>,
-        _ctx: tracing_subscriber::layer::Context<'_, S>,
-    ) {
-        // Covert the values into a JSON object
-        let mut fields = BTreeMap::new();
-        let mut visitor = JsonVisitor(&mut fields);
-        event.record(&mut visitor);
-
-        // Output the event in JSON
-        let output = serde_json::json!({
-            "target": event.metadata().target(),
-            "caller": format!("{}",event.metadata().name()),
-            "level": format!("{}", event.metadata().level()),
-            "time":  format!("{:?}",Local::now()),
-            "fields": fields,
-        });
-        println!("{}", serde_json::to_string(&output).unwrap());
-        // let output = serde_json::json!({
-        //     "target": event.metadata().target(),
-        //     "caller": format!("{}",event.metadata().name()),
-        //     "level": format!("{}", event.metadata().level()),
-        //     "time":  format!("{:?}",Local::now()),
-        //     "fields": fields,
-        // });
-        // let output = format!(
-        //     "{:?} {} {} {} {}",
-        //     Local::now(),
-        //     event.metadata().level(),
-        //     event.metadata().target(),
-        //     event.metadata().name(),
-        //     serde_json::json!({ "fields": fields }),
-        // );
-        // println!("{}", output);
-    }
-}
-
-struct JsonVisitor<'a>(&'a mut BTreeMap<String, serde_json::Value>);
-
-impl<'a> tracing::field::Visit for JsonVisitor<'a> {
-    fn record_f64(&mut self, field: &tracing::field::Field, value: f64) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
-
-    fn record_i64(&mut self, field: &tracing::field::Field, value: i64) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
-
-    fn record_u64(&mut self, field: &tracing::field::Field, value: u64) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
-
-    fn record_bool(&mut self, field: &tracing::field::Field, value: bool) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
-
-    fn record_str(&mut self, field: &tracing::field::Field, value: &str) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
-
-    fn record_error(
-        &mut self,
-        field: &tracing::field::Field,
-        value: &(dyn std::error::Error + 'static),
-    ) {
-        self.0.insert(
-            field.name().to_string(),
-            serde_json::json!(value.to_string()),
-        );
-    }
-
-    fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
-        self.0.insert(
-            field.name().to_string(),
-            serde_json::json!(format!("{:?}", value)),
-        );
-    }
-}
+// pub struct CustomLayer;
+//
+// impl<S> tracing_subscriber::Layer<S> for CustomLayer
+// where
+//     S: tracing::Subscriber,
+// {
+//     fn on_event(
+//         &self,
+//         event: &tracing::Event<'_>,
+//         _ctx: tracing_subscriber::layer::Context<'_, S>,
+//     ) {
+//         // Covert the values into a JSON object
+//         let mut fields = BTreeMap::new();
+//         let mut visitor = JsonVisitor(&mut fields);
+//         event.record(&mut visitor);
+//
+//         // Output the event in JSON
+//         let output = serde_json::json!({
+//             "target": event.metadata().target(),
+//             "caller": format!("{}",event.metadata().name()),
+//             "level": format!("{}", event.metadata().level()),
+//             "time":  format!("{:?}",Local::now()),
+//             "fields": fields,
+//         });
+//         println!("{}", serde_json::to_string(&output).unwrap());
+//         // let output = serde_json::json!({
+//         //     "target": event.metadata().target(),
+//         //     "caller": format!("{}",event.metadata().name()),
+//         //     "level": format!("{}", event.metadata().level()),
+//         //     "time":  format!("{:?}",Local::now()),
+//         //     "fields": fields,
+//         // });
+//         // let output = format!(
+//         //     "{:?} {} {} {} {}",
+//         //     Local::now(),
+//         //     event.metadata().level(),
+//         //     event.metadata().target(),
+//         //     event.metadata().name(),
+//         //     serde_json::json!({ "fields": fields }),
+//         // );
+//         // println!("{}", output);
+//     }
+// }
+//
+// struct JsonVisitor<'a>(&'a mut BTreeMap<String, serde_json::Value>);
+//
+// impl<'a> tracing::field::Visit for JsonVisitor<'a> {
+//     fn record_f64(&mut self, field: &tracing::field::Field, value: f64) {
+//         self.0
+//             .insert(field.name().to_string(), serde_json::json!(value));
+//     }
+//
+//     fn record_i64(&mut self, field: &tracing::field::Field, value: i64) {
+//         self.0
+//             .insert(field.name().to_string(), serde_json::json!(value));
+//     }
+//
+//     fn record_u64(&mut self, field: &tracing::field::Field, value: u64) {
+//         self.0
+//             .insert(field.name().to_string(), serde_json::json!(value));
+//     }
+//
+//     fn record_bool(&mut self, field: &tracing::field::Field, value: bool) {
+//         self.0
+//             .insert(field.name().to_string(), serde_json::json!(value));
+//     }
+//
+//     fn record_str(&mut self, field: &tracing::field::Field, value: &str) {
+//         self.0
+//             .insert(field.name().to_string(), serde_json::json!(value));
+//     }
+//
+//     fn record_error(
+//         &mut self,
+//         field: &tracing::field::Field,
+//         value: &(dyn std::error::Error + 'static),
+//     ) {
+//         self.0.insert(
+//             field.name().to_string(),
+//             serde_json::json!(value.to_string()),
+//         );
+//     }
+//
+//     fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
+//         self.0.insert(
+//             field.name().to_string(),
+//             serde_json::json!(format!("{:?}", value)),
+//         );
+//     }
+// }
 
 // // 用来格式化日志的输出时间格式
 // pub struct LocalTimer;
@@ -155,12 +155,25 @@ impl<'a> tracing::field::Visit for JsonVisitor<'a> {
 // }
 
 pub fn init() {
-    // Set up how `tracing-subscriber` will deal with tracing data.
-    tracing_subscriber::registry()
-        .with(
-            CustomLayer.with_filter(tracing_subscriber::filter::FilterFn::new(|metadata| {
-                metadata.level() <= &tracing::Level::DEBUG
-            })),
-        )
+    use env_logger::{Builder, Env};
+    use std::io::Write;
+
+    // let env = Env::new().filter("MY_LOG").write_style("MY_LOG_STYLE");
+    let env = Env::new().default_filter_or("debug");
+
+    let mut builder = Builder::from_env(env);
+    builder
+        // .format(|buf, record| {
+        //     writeln!(
+        //         buf,
+        //         "{} {} [{}] {}",
+        //         Local::now().format("%Y-%m-%d %H:%M:%S"),
+        //         record.level(),
+        //         record.module_path().unwrap_or("<unnamed>"),
+        //         &record.args()
+        //     )
+        // })
         .init();
+
+    info!("env_logger initialized.");
 }

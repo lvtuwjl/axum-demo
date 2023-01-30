@@ -9,7 +9,7 @@ use axum::{
 };
 
 pub async fn cors<B>(req: Request<B>, next: Next<B>) -> Response {
-    tracing::debug!("cors middleware {}", "cors");
+    debug!("cors middleware {}", "cors");
 
     let origin = req.headers().clone();
 
@@ -20,7 +20,7 @@ pub async fn cors<B>(req: Request<B>, next: Next<B>) -> Response {
     let mut res = next.run(req).await;
     match origin {
         Some(origin) if origin_is_valid(origin) => {
-            tracing::debug!("cors middleware {}", "origin");
+            debug!("cors middleware {}", "origin");
             // 处理逻辑
             // let res = next.run(req).await;
             res = allow_origin(origin, res).await;
@@ -55,7 +55,7 @@ pub async fn options<B>(req: Request<B>, next: Next<B>) -> Result<Response, Stat
     //      }
     //      _ => Err(StatusCode::UNAUTHORIZED),
     // }
-    tracing::debug!("cors middleware {}", "options");
+    debug!("cors middleware {}", "options");
     match req.method() {
         &Method::OPTIONS => Err(StatusCode::NO_CONTENT),
         _ => Ok(next.run(req).await),

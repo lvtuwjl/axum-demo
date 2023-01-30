@@ -10,6 +10,9 @@ mod router;
 mod service;
 mod util;
 
+#[macro_use]
+extern crate log;
+
 use cli::Cli;
 
 pub type Result<T> = std::result::Result<T, failure::Error>;

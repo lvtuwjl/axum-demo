@@ -10,10 +10,6 @@ use axum::{
 use std::net::SocketAddr;
 
 use tower_http::trace::TraceLayer;
-use tracing_subscriber::{
-    filter::{EnvFilter, LevelFilter},
-    fmt::layer,
-};
 
 pub async fn start() {
     // build our application with a route
@@ -44,7 +40,7 @@ pub async fn start() {
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     // let sp = tracing::span!(tracing::Level::TRACE,"ha");
     // let _enter = sp.enter();
-    tracing::debug!("listening on {}", addr);
+    debug!("listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
