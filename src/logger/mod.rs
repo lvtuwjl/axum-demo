@@ -167,7 +167,7 @@ pub fn init() {
         //     writeln!(
         //         buf,
         //         "{} {} [{}] {}",
-        //         Local::now().format("%Y-%m-%d %H:%M:%S"),
+        //         chrono::Local::now(),
         //         record.level(),
         //         record.module_path().unwrap_or("<unnamed>"),
         //         &record.args()
@@ -175,5 +175,8 @@ pub fn init() {
         // })
         .init();
 
-    info!("env_logger initialized.");
+    info!(
+        "[{}={} {}={}] env_logger initialized.",
+        "key1", "value1", "key2", "value2"
+    );
 }
