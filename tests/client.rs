@@ -87,3 +87,50 @@ mod test {
         assert_eq!(Three, serde_json::from_str("3").unwrap());
     }
 }
+
+static mut LP: i32 = 0;
+
+/// test Future async/await
+#[test]
+#[tokio::main]
+async fn test_() {
+    let aa = AA { a: 9 };
+    aa.await.unwrap();
+
+    println!("end....");
+}
+
+#[derive(Debug)]
+struct AA {
+    a: i8,
+}
+
+#[cfg_attr(docsrs, doc(cfg(any(feature = "http1", feature = "http2"))))]
+impl std::future::Future for AA {
+    type Output = std::result::Result<(), bool>;
+
+    fn poll(
+        self: std::pin::Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+        let waker = cx.waker().clone();
+
+        std::thread::spawn(move || {
+            // for i in 0..7 {
+            std::thread::sleep(std::time::Duration::from_secs(1));
+            println!("定时执行");
+            waker.clone().wake();
+            // }
+        });
+
+        // println!("wakkk:{:?}", waker);
+        unsafe {
+            println!("111:{}", LP);
+            if LP == 5 {
+                return std::task::Poll::Ready(Ok(()));
+            }
+            LP = LP + 1;
+        }
+        return std::task::Poll::Pending;
+    }
+}
