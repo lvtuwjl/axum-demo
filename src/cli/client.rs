@@ -6,7 +6,7 @@ use tokio::net::TcpStream;
 pub async fn start() -> Result<()> {
     info!("client start success!");
     // Connect to a peer
-    let mut stream = TcpStream::connect("127.0.0.1:8080").await?;
+    let mut stream = TcpStream::connect("127.0.0.1:3251").await?;
     info!("client start succeeeess!");
 
     // Write some data.
