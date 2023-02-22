@@ -26,6 +26,14 @@ impl Cli {
                         .help("the port bind to locally"),
                 ),
             )
+            .subcommand(
+                Command::new("startclient").about("start an client").arg(
+                    Arg::new("port")
+                        .short('p')
+                        .long("port")
+                        .help("the port for client"),
+                ),
+            )
             .get_matches();
 
         if let Some(_) = matches.subcommand_matches("printname") {
@@ -39,7 +47,13 @@ impl Cli {
                 info!("listen port:{}", port);
 
                 // start axum server
-                router::start().await
+                router::start().await;
+            }
+        } else if let Some(ref matches) = matches.subcommand_matches("startclient") {
+            info!("client:{}", "start client");
+            if let Some(port) = matches.get_one::<String>("port") {
+                info!("client port:{}", port);
+                super::client::start().await?;
             }
         }
 
