@@ -5,7 +5,7 @@ use crate::cli::codec::{HEAD_LENGTH, MAX_PACKET_SIZE};
 struct Encoder {}
 
 impl Encoder {
-    fn encoder(&self, typ: Type, data: &[u8]) -> Result<Vec<u8>, &str> {
+    fn encode(&self, typ: Type, data: &[u8]) -> Result<Vec<u8>, &str> {
         if typ < Handshake || typ > Kick {
             error!("Encode type < Handshake || type > Kick, type = {:?}", typ);
             return Err("wrong packet type");
@@ -38,10 +38,10 @@ fn usize_to_vec(n: usize) -> Vec<u8> {
 }
 
 #[test]
-fn encoder_test() {
+fn encode_test() {
     let data = vec![97, 98, 99, 10, 101];
     let enc = Encoder {};
-    let res = enc.encoder(HandshakeAck, &data);
+    let res = enc.encode(HandshakeAck, &data);
     println!("res:{:?}", res);
     assert_eq!(Ok(vec![1, 0, 0, 5, 97, 98, 99, 10, 101]), res)
 }

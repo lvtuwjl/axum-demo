@@ -8,7 +8,7 @@ use futures::SinkExt;
 struct Decoder {}
 
 impl Decoder {
-    fn decoder(&self, data: &[u8]) -> Result<Vec<Packet>, &str> {
+    fn decode(&self, data: &[u8]) -> Result<Vec<Packet>, &str> {
         let mut packets: Vec<Packet> = Vec::new();
         if data.len() < HEAD_LENGTH {
             return Err("wrong packet length");
@@ -67,9 +67,9 @@ fn parse_header(header: Vec<u8>) {
 }
 
 #[test]
-fn decoder_test() {
+fn decode_test() {
     let b = vec![1, 0, 0, 5, 97, 98, 99, 10, 101];
     let dec = Decoder {};
-    let res = dec.decoder(&b);
+    let res = dec.decode(&b);
     println!("res:{:?}", res);
 }
