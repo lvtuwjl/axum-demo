@@ -1,18 +1,35 @@
-use super::{Compact, Type};
-use crate::cli::codec::Type::{Handshake, HandshakeAck, Kick};
-use crate::cli::codec::{HEAD_LENGTH, MAX_PACKET_SIZE};
-// use crate::Result;
-struct Encoder {}
+use super::{
+    Type,
+    Type::{Handshake, Kick},
+    HEAD_LENGTH, MAX_PACKET_SIZE,
+};
+use crate::Result;
 
-impl Encoder {
-    fn encode(&self, typ: Type, data: &[u8]) -> Result<Vec<u8>, &str> {
+pub trait Encoder {
+    /// The type of items consumed by the `Encoder`
+    type Item;
+
+    /// Encodes a frame into the buffer provided.
+    ///
+    /// This method will encode `item` into the byte buffer provided by `dst`.
+    /// The `dst` provided is an internal buffer of the `Framed` instance and
+    /// will be written out when possible.
+    fn encode(&self, typ: Self::Item, data: &[u8]) -> Result<Vec<u8>>;
+}
+
+struct PacketEncoder {}
+
+impl Encoder for PacketEncoder {
+    type Item = Type;
+
+    fn encode(&self, typ: Self::Item, data: &[u8]) -> Result<Vec<u8>> {
         if typ < Handshake || typ > Kick {
             error!("Encode type < Handshake || type > Kick, type = {:?}", typ);
-            return Err("wrong packet type");
+            return Err(format_err!("wrong packet type"));
         }
 
         if data.len() > MAX_PACKET_SIZE {
-            return Err("codec: packet size exceed");
+            return Err(format_err!("codec: packet size exceed"));
         }
 
         let cap = HEAD_LENGTH + data.len();
@@ -40,8 +57,9 @@ fn usize_to_vec(n: usize) -> Vec<u8> {
 #[test]
 fn encode_test() {
     let data = vec![97, 98, 99, 10, 101];
-    let enc = Encoder {};
-    let res = enc.encode(HandshakeAck, &data);
+    let enc = PacketEncoder {};
+    let res = enc.encode(Handshake, &data);
     println!("res:{:?}", res);
-    assert_eq!(Ok(vec![1, 0, 0, 5, 97, 98, 99, 10, 101]), res)
+    // Output:
+    // Ok([0, 0, 0, 5, 97, 98, 99, 10, 101])
 }

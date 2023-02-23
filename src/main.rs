@@ -13,6 +13,9 @@ mod util;
 #[macro_use]
 extern crate log;
 
+#[macro_use]
+extern crate failure;
+
 use cli::Cli;
 
 pub type Result<T> = std::result::Result<T, failure::Error>;

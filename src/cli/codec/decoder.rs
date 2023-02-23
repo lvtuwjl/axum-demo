@@ -1,38 +1,77 @@
-use crate::cli::codec::Type::{Handshake, Kick};
-use crate::cli::codec::{Packet, Type, HEAD_LENGTH, MAX_PACKET_SIZE};
-use clap::Error;
-use futures::future::ok;
-use futures::SinkExt;
+use super::{
+    Packet, Type,
+    Type::{Handshake, Kick},
+    HEAD_LENGTH, MAX_PACKET_SIZE,
+};
+use crate::Result;
+use bytes::BytesMut;
+use chrono::format::Item;
 
-// use crate::Result;
-struct Decoder {}
+pub trait Decoder {
+    /// The type of items consumed by the `Decoder`
+    type Item;
 
-impl Decoder {
-    fn decode(&self, data: &[u8]) -> Result<Vec<Packet>, &str> {
-        let mut packets: Vec<Packet> = Vec::new();
-        if data.len() < HEAD_LENGTH {
-            return Err("wrong packet length");
+    /// Encodes a frame into the buffer provided.
+    ///
+    /// This method will encode `item` into the byte buffer provided by `dst`.
+    /// The `dst` provided is an internal buffer of the `Framed` instance and
+    /// will be written out when possible.
+    fn decode(&self, data: &[u8]) -> Result<Vec<Self::Item>>;
+}
+
+struct PacketDecoder {}
+
+impl PacketDecoder {
+    fn forward(&self, buf: &mut BytesMut) -> Result<(usize, Type)> {
+        let header = buf.split_to(HEAD_LENGTH);
+        self.parse_header(header)
+    }
+
+    fn parse_header(&self, mut header: BytesMut) -> Result<(usize, Type)> {
+        if header.len() != HEAD_LENGTH {
+            return Err(format_err!("invalid header"));
         }
-
-        let typ = data[0];
-        let typ = Type::try_from(typ).unwrap();
+        let first = header.split_to(1)[0]; // 获取第一个元素 得到消息类型
+        let typ = Type::try_from(first).unwrap();
         if typ < Handshake || typ > Kick {
-            return Err("wrong packet type");
+            return Err(format_err!("wrong packet type"));
         }
 
-        let size = vec_to_usize(&data[1..HEAD_LENGTH]);
+        let size = vec_to_usize(header.split().as_ref());
 
         if size > MAX_PACKET_SIZE {
-            return Err("wrong packet max size");
+            return Err(format_err!("codec: packet size exceed"));
         }
 
-        if size <= data.len() - HEAD_LENGTH {
+        Ok((size, typ))
+    }
+}
+
+impl Decoder for PacketDecoder {
+    type Item = Packet;
+
+    fn decode(&self, data: &[u8]) -> Result<Vec<Self::Item>> {
+        let mut buf = BytesMut::from(data);
+        let mut packets: Vec<Self::Item> = Vec::new();
+        if buf.len() < HEAD_LENGTH {
+            return Err(format_err!("wrong packet length"));
+        }
+
+        let (mut size, mut typ) = self.forward(&mut buf)?;
+        while size <= buf.len() {
             let p = Packet {
                 r#type: typ,
                 length: size,
-                data: data[HEAD_LENGTH..].to_vec(),
+                data: buf.split_to(size).to_vec(),
             };
             packets.push(p);
+
+            // if no more packets, break
+            if buf.len() < HEAD_LENGTH {
+                break;
+            }
+
+            (size, typ) = self.forward(&mut buf)?;
         }
 
         Ok(packets)
@@ -47,29 +86,10 @@ fn vec_to_usize(b: &[u8]) -> usize {
     return result;
 }
 
-fn parse_header(header: Vec<u8>) {
-    // if len(header) != HeadLength {
-    // return 0, 0x00, packet.ErrInvalidPomeloHeader
-    // }
-    // typ := header[0]
-    // if typ < packet.Handshake || typ > packet.API {
-    // logger.Log.Debugf("ParseHeader typ < packet.Handshake || typ > packet.API,typ=%s", typ)
-    // return 0, 0x00, packet.ErrWrongPomeloPacketType
-    // }
-    //
-    // size := BytesToInt(header[1:])
-    //
-    // if size > MaxPacketSize {
-    // return 0, 0x00, ErrPacketSizeExcced
-    // }
-    //
-    // return size, packet.Type(typ), nil
-}
-
 #[test]
 fn decode_test() {
-    let b = vec![1, 0, 0, 5, 97, 98, 99, 10, 101];
-    let dec = Decoder {};
+    let b = vec![0, 0, 0, 5, 97, 98, 99, 10, 101];
+    let dec = PacketDecoder {};
     let res = dec.decode(&b);
     println!("res:{:?}", res);
 }
