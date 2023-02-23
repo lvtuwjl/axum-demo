@@ -154,29 +154,49 @@
 //     Ok((file_guard))
 // }
 
-pub fn init() {
-    use env_logger::{Builder, Env};
-    use std::io::Write;
+use chrono::Local;
+use env_logger::fmt;
+use env_logger::{Builder, Env};
+use log::kv;
+use log::kv::Visitor;
+use std::io::Write;
 
+pub fn init() {
     // let env = Env::new().filter("MY_LOG").write_style("MY_LOG_STYLE");
     let env = Env::new().default_filter_or("debug");
 
     let mut builder = Builder::from_env(env);
+
     builder
-        // .format(|buf, record| {
-        //     writeln!(
-        //         buf,
-        //         "{} {} [{}] {}",
-        //         chrono::Local::now(),
-        //         record.level(),
-        //         record.module_path().unwrap_or("<unnamed>"),
-        //         &record.args()
-        //     )
-        // })
+        .format(|buf, record| {
+            let mut visitor = KvUnstableVisitor { kvs: String::new() };
+            record.key_values().visit(&mut visitor);
+
+            write!(
+                buf,
+                "[{} {} {}] {}:{} {} {}\n",
+                chrono::Local::now().to_rfc3339(),
+                record.level(),
+                record.module_path().unwrap_or("<unnamed>"),
+                record.file().unwrap(),
+                record.line().unwrap(),
+                record.args(),
+                visitor.kvs,
+            )
+        })
         .init();
 
-    info!(
-        "[{}={} {}={}] env_logger initialized.",
-        "key1", "value1", "key2", "value2"
-    );
+    info!(key1 = "value1",key2 = "value2";"env_logger initialized.");
+}
+
+/// kv_unstable log features to version = "0.4.17"
+struct KvUnstableVisitor {
+    kvs: String,
+}
+
+impl<'kvs> Visitor<'kvs> for KvUnstableVisitor {
+    fn visit_pair(&mut self, k: kv::Key<'kvs>, v: kv::Value<'kvs>) -> Result<(), kv::Error> {
+        self.kvs = format!("{} {}={}", self.kvs, k, v);
+        Ok(())
+    }
 }
