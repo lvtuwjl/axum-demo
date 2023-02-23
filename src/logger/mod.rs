@@ -196,7 +196,7 @@ struct KvUnstableVisitor {
 
 impl<'kvs> Visitor<'kvs> for KvUnstableVisitor {
     fn visit_pair(&mut self, k: kv::Key<'kvs>, v: kv::Value<'kvs>) -> Result<(), kv::Error> {
-        self.kvs = format!("{} {}={}", self.kvs, k, v);
+        self.kvs += format!("{}={} ", k, v).as_str();
         Ok(())
     }
 }
