@@ -5,7 +5,6 @@ use super::{
 };
 use crate::Result;
 use bytes::BytesMut;
-use chrono::format::Item;
 
 pub trait Decoder {
     /// The type of items consumed by the `Decoder`
