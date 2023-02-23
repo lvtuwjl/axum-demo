@@ -1,5 +1,7 @@
-mod decoder;
-mod encoder;
+pub mod decoder;
+pub mod encoder;
+
+pub use decoder::PacketDecoder;
 
 use num_enum::IntoPrimitive;
 use num_enum::TryFromPrimitive;
@@ -26,7 +28,7 @@ pub struct Compact {
 }
 
 #[derive(Debug)]
-struct Packet {
+pub struct Packet {
     r#type: Type,
     length: usize,
     data: Vec<u8>,

@@ -55,7 +55,7 @@ fn usize_to_vec(n: usize) -> Vec<u8> {
 }
 
 #[test]
-fn encode_test() {
+fn test_encode() {
     let data = vec![97, 98, 99, 10, 101];
     let enc = PacketEncoder {};
     let res = enc.encode(Handshake, &data);

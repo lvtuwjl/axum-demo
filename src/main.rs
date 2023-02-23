@@ -21,7 +21,7 @@ use cli::Cli;
 pub type Result<T> = std::result::Result<T, failure::Error>;
 
 #[tokio::main]
-async fn main() -> reqwest::Result<()> {
+async fn main() -> Result<()> {
     // 初始化日志
     // let _guard = logger::init();
     logger::init();

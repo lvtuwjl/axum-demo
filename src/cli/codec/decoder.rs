@@ -19,7 +19,7 @@ pub trait Decoder {
     fn decode(&self, data: &[u8]) -> Result<Vec<Self::Item>>;
 }
 
-struct PacketDecoder {}
+pub struct PacketDecoder {}
 
 impl PacketDecoder {
     fn forward(&self, buf: &mut BytesMut) -> Result<(usize, Type)> {
@@ -87,7 +87,7 @@ fn vec_to_usize(b: &[u8]) -> usize {
 }
 
 #[test]
-fn decode_test() {
+fn test_decode() {
     let b = vec![0, 0, 0, 5, 97, 98, 99, 10, 101];
     let dec = PacketDecoder {};
     let res = dec.decode(&b);
