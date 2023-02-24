@@ -191,7 +191,7 @@ pub fn init() {
             record.key_values().visit(&mut visitor);
 
             let output = serde_json::json!({
-                "time": chrono::Local::now().to_rfc3339(),
+                "time": Local::now().format("%FT%T%.6fZ").to_string(),
                 "level":record.level(),
                 "caller":format!("{}:{}",record.file().unwrap(),record.line().unwrap()),
                 "target":record.module_path().unwrap_or("<unnamed>"),
