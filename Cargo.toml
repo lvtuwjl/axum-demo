@@ -1,6 +1,6 @@
 [package]
 name = "axum-demo"
-version = "0.1.0"
+version = "0.1.3"
 edition = "2021"
 
 #[[bin]]
@@ -91,7 +91,7 @@ version = "0.3.17"
 
 [dependencies.log]
 version = "0.4.17"
-features = ["kv_unstable"]
+features = ["kv_unstable_serde"]
 
 [dependencies.chrono]
 version = "0.4.23"

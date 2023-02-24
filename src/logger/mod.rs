@@ -157,8 +157,8 @@
 use chrono::Local;
 use env_logger::fmt;
 use env_logger::{Builder, Env};
-use log::kv;
-use log::kv::Visitor;
+use log::kv::{Error, Key, Value, Visitor};
+use std::collections::BTreeMap;
 use std::io::Write;
 
 pub fn init() {
@@ -168,25 +168,42 @@ pub fn init() {
     let mut builder = Builder::from_env(env);
 
     builder
+        // .format(|buf, record| {
+        //     let mut visitor = KvUnstableVisitor { kvs: String::new() };
+        //     record.key_values().visit(&mut visitor);
+        //
+        //     write!(
+        //         buf,
+        //         "[{} {} {}] {}:{} {} {}\n",
+        //         chrono::Local::now().to_rfc3339(),
+        //         record.level(),
+        //         record.module_path().unwrap_or("<unnamed>"),
+        //         record.file().unwrap(),
+        //         record.line().unwrap(),
+        //         record.args(),
+        //         visitor.kvs,
+        //     )
+        // })
         .format(|buf, record| {
-            let mut visitor = KvUnstableVisitor { kvs: String::new() };
+            let mut visitor = JsonKvUnstableVisitor {
+                kvs: BTreeMap::new(),
+            };
             record.key_values().visit(&mut visitor);
 
-            write!(
-                buf,
-                "[{} {} {}] {}:{} {} {}\n",
-                chrono::Local::now().to_rfc3339(),
-                record.level(),
-                record.module_path().unwrap_or("<unnamed>"),
-                record.file().unwrap(),
-                record.line().unwrap(),
-                record.args(),
-                visitor.kvs,
-            )
+            let output = serde_json::json!({
+                "time": chrono::Local::now().to_rfc3339(),
+                "level":record.level(),
+                "caller":format!("{}:{}",record.file().unwrap(),record.line().unwrap()),
+                "target":record.module_path().unwrap_or("<unnamed>"),
+                "msg":record.args(),
+                "fields":serde_json::json!(visitor.kvs),
+            });
+
+            write!(buf, "{}\n", output)
         })
         .init();
 
-    info!(key1 = "value1",key2 = "value2";"env_logger initialized.");
+    info!("key1" = "value1","key2" = as_serde!(vec![3,5,6,7]);"env_logger initialized.");
 }
 
 /// kv_unstable log features to version = "0.4.17"
@@ -195,8 +212,21 @@ struct KvUnstableVisitor {
 }
 
 impl<'kvs> Visitor<'kvs> for KvUnstableVisitor {
-    fn visit_pair(&mut self, k: kv::Key<'kvs>, v: kv::Value<'kvs>) -> Result<(), kv::Error> {
-        self.kvs += format!("{}={} ", k, v).as_str();
+    fn visit_pair(&mut self, key: Key<'kvs>, value: Value<'kvs>) -> Result<(), Error> {
+        self.kvs += format!("{}={} ", key, value).as_str();
+        Ok(())
+    }
+}
+
+/// kv_unstable log features to version = "0.4.17"
+#[derive(Debug)]
+struct JsonKvUnstableVisitor {
+    kvs: BTreeMap<String, serde_json::Value>,
+}
+
+impl<'kvs> Visitor<'kvs> for JsonKvUnstableVisitor {
+    fn visit_pair(&mut self, key: Key<'kvs>, value: Value<'kvs>) -> Result<(), Error> {
+        self.kvs.insert(key.to_string(), serde_json::json!(value));
         Ok(())
     }
 }
