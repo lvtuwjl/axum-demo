@@ -134,3 +134,142 @@ impl std::future::Future for AA {
         return std::task::Poll::Pending;
     }
 }
+
+// #![allow(unused)]
+//
+// use std::future::Future;
+// use std::pin::Pin;
+// use std::task::{Context, Poll};
+//
+// #[derive(Debug, Clone)]
+// struct AB {
+//     name: String,
+//     age: i8,
+// }
+//
+// impl AB {
+//     fn hp(self) -> String {
+//         // let n = self.name;
+//         std::mem::forget(self);
+//         // let n = self.age.clone();
+//         // println!("n:{}", n);
+//         String::from("dfjs")
+//     }
+// }
+//
+// impl Drop for AB {
+//     fn drop(&mut self) {
+//         println!("11232");
+//     }
+// }
+//
+// #[tokio::main]
+// async fn main() {
+//     let mut s23 = String::from("ac");
+//     let ff0 = &s23;
+//
+//     let sf21 = &mut s23;
+//
+//     let sf22 = sf21;
+//     // let sf23 = sf22;
+//
+//     println!("s:{} {}", "", sf22);
+//
+//     // println!("s:{} {} {} {}", s23, sf21, sf22, sf23);
+//
+//     return;
+//     // use std::collections::hash_map::DefaultHasher;
+//     // use std::hash::{Hash, Hasher};
+//     //
+//     // let mut hasher = DefaultHasher::new();
+//     // 1.hash(&mut hasher);
+//     // println!("Hash is {:x}!", hasher.finish());
+//     //
+//     // return;
+//     // let hh = AB {
+//     //     name: String::from("jaa"),
+//     //     age: 9,
+//     // };
+//     //
+//     // println!("hh:{:?}", hh);
+//     // hh.hp();
+//     //
+//     // return;
+//     // {
+//     //     let ggg = AA { age: 12 };
+//     // }
+//     println!("878787");
+//     // std::thread::sleep(std::time::Duration::from_secs(10));
+//
+//     let aa = AA { age: 12 };
+//     let _ = aa.await;
+//     // for i in 0..10 {
+//     //     std::thread::spawn(|| {
+//     //         std::thread::sleep(std::time::Duration::from_secs(1));
+//     //     })
+//     // }
+//     println!("hahahha");
+//     std::thread::sleep(std::time::Duration::from_secs(10));
+//     println!("endeee");
+// }
+//
+// #[derive(Debug)]
+// struct AA {
+//     age: i8,
+// }
+//
+// impl Future for AA {
+//     type Output = ();
+//     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+//         println!("5555:{:?}", cx.waker());
+//
+//         // {
+//         //     let wak11 = cx.waker().clone();
+//         // }
+//
+//         /*        let wak = cx.waker().clone();
+//         println!("6666:{:?}", wak);
+//
+//         std::thread::spawn(move || {
+//             println!("777777:{:?}", wak);
+//             unsafe {
+//                 C += 1;
+//             }
+//
+//             std::thread::sleep(std::time::Duration::from_secs(1));
+//             println!("909090");
+//             unsafe {
+//                 // if C > 3 {
+//                 // wak.wake_by_ref();
+//                 wak.wake();
+//                 // }
+//             }
+//
+//             // wak.wake();
+//         });
+//         unsafe {
+//             if C > 8 {
+//                 return Poll::Ready(());
+//             }
+//         }*/
+//
+//         Poll::Pending
+//     }
+// }
+//
+// static mut C: i8 = 0;
+//
+// // use tokio::net::TcpStream;
+// // use tokio::io::AsyncWriteExt;
+// // use std::error::Error;
+// //
+// // #[tokio::main]
+// // async fn main1() -> Result<(), Box<dyn Error>> {
+// //     // Connect to a peer
+// //     let mut stream = TcpStream::connect("127.0.0.1:8080").await?;
+// //
+// //     // Write some data.
+// //     stream.write_all(b"hello world!").await?;
+// //
+// //     Ok(())
+// // }
