@@ -92,17 +92,19 @@ static mut LP: i32 = 0;
 
 /// test Future async/await
 #[test]
-#[tokio::main]
-async fn test_() {
-    let aa = AA { a: 9 };
-    aa.await.unwrap();
+fn test_() {
+    use tokio::runtime::Builder;
+
+    let aa = AA { _a: 9 };
+    let rt = Builder::new_multi_thread().build().unwrap();
+    rt.block_on(aa).unwrap();
 
     println!("end....");
 }
 
 #[derive(Debug)]
 struct AA {
-    a: i8,
+    _a: i8,
 }
 
 #[cfg_attr(docsrs, doc(cfg(any(feature = "http1", feature = "http2"))))]
