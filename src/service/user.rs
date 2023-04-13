@@ -16,7 +16,7 @@ pub async fn get_user(Form(gu): Form<GetUser>) -> impl IntoResponse {
     // get
     let user = db.get(gu.phone.as_bytes());
     if let Ok(None) = user {
-        let resp = Response::new(200, String::from("此账号不存在"), None);
+        let resp = Response::new(500, String::from("此账号不存在"), None);
         // let resp = Response {
         //     code: 200,
         //     message: String::from("此账号不存在"),
