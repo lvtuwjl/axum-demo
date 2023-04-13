@@ -1,5 +1,5 @@
 use crate::middleware::auth::Auth;
-use crate::middleware::cors::{cors, options};
+use crate::middleware::cors::cors;
 use crate::service::user::*;
 
 use axum::{
@@ -11,7 +11,7 @@ use std::net::SocketAddr;
 
 use tower_http::trace::TraceLayer;
 
-pub async fn start() {
+pub async fn start(port: &str) {
     // build our application with a route
     // let app = Router::new();
 
@@ -32,12 +32,12 @@ pub async fn start() {
     // nest 嵌套路由
     let app = Router::new()
         .nest("", nested)
-        .route_layer(from_fn(options)) // OPTIONS预检请求
+        // .route_layer(from_fn(options)) // OPTIONS预检请求
         .route_layer(from_fn(cors)); // CORS跨域方案
 
     // run our app with hyper
     // `axum::Server` is a re-export of `hyper::Server`
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([127, 0, 0, 1], port.parse::<u16>().unwrap()));
     // let sp = tracing::span!(tracing::Level::TRACE,"ha");
     // let _enter = sp.enter();
     debug!("listening on {}", addr);

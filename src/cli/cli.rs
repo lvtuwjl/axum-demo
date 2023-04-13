@@ -47,7 +47,7 @@ impl Cli {
                 info!("listen port:{}", port);
 
                 // start axum server
-                router::start().await;
+                router::start(port).await;
             }
         } else if let Some(ref matches) = matches.subcommand_matches("startclient") {
             info!("client:{}", "start client");

@@ -11,29 +11,52 @@ use axum::{
 pub async fn cors<B>(req: Request<B>, next: Next<B>) -> Response {
     debug!("cors middleware {}", "cors");
 
-    let origin = req.headers().clone();
-
-    let origin = origin
+    let headers = req.headers().clone();
+    let method = req.method().clone();
+    let origin = headers
         .get(axum::http::header::ORIGIN)
         .and_then(|header| header.to_str().ok());
 
-    let mut res = next.run(req).await;
+    let mut response = next.run(req).await;
     match origin {
         Some(origin) if origin_is_valid(origin) => {
             debug!("cors middleware {}", "origin");
-            // 处理逻辑
-            // let res = next.run(req).await;
-            res = allow_origin(origin, res).await;
-            res = allow_headers(res).await;
-            res = allow_methods(res).await;
-            res = expose_headers(res).await;
-            res = max_age(res).await;
-            res = allow_credentials(res).await;
+            // Add Response Headers
+            response
+                .headers_mut()
+                .append(axum::http::header::ORIGIN.as_str(), origin.parse().unwrap());
+            response.headers_mut().append(
+                axum::http::header::ACCESS_CONTROL_ALLOW_HEADERS.as_str(),
+                "Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,X-Data-Type,X-Requested-With,X-Data-Type,X-Auth-Token,header,clientParams,platform,client,Content-Disposition".parse().unwrap(),
+            );
+            response.headers_mut().append(
+                axum::http::header::ACCESS_CONTROL_ALLOW_METHODS.as_str(),
+                "GET,POST,OPTIONS,DELETE".parse().unwrap(),
+            );
+            response.headers_mut().append(
+                axum::http::header::ACCESS_CONTROL_EXPOSE_HEADERS.as_str(),
+                "Content-Length,Access-Control-Allow-Origin,Access-Control-Allow-Headers,Content-Type,platform,Authorization,Content-Disposition".parse().unwrap(),
+            );
+            response.headers_mut().append(
+                axum::http::header::ACCESS_CONTROL_MAX_AGE.as_str(),
+                "3600".parse().unwrap(),
+            );
+            response.headers_mut().append(
+                axum::http::header::ACCESS_CONTROL_ALLOW_CREDENTIALS.as_str(),
+                "true".parse().unwrap(),
+            );
         }
         _ => {}
     }
 
-    res
+    match method {
+        Method::OPTIONS => {
+            *response.status_mut() = StatusCode::NO_CONTENT;
+        }
+        _ => {}
+    }
+
+    response
 }
 
 fn origin_is_valid(origin: &str) -> bool {
