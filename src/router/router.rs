@@ -1,5 +1,6 @@
 use crate::middleware::auth::Auth;
 use crate::middleware::cors::cors;
+use crate::service::article::*;
 use crate::service::user::*;
 
 use axum::{
@@ -21,6 +22,9 @@ pub async fn start(port: &str) {
         .route("/user", get(get_user))
         // `POST /users` goes to `create_user`
         .route("/user", post(create_user))
+        .route("/article", get(search))
+        // `POST /users` goes to `create_user`
+        .route("/article", post(create))
         .route("/options", get(get_options))
         .layer(TraceLayer::new_for_http())
         // .layer(map_request(never_called)) // 请求后中间件

@@ -22,9 +22,10 @@ pub async fn cors<B>(req: Request<B>, next: Next<B>) -> Response {
         Some(origin) if origin_is_valid(origin) => {
             debug!("cors middleware {}", "origin");
             // Add Response Headers
-            response
-                .headers_mut()
-                .append(axum::http::header::ORIGIN.as_str(), origin.parse().unwrap());
+            response.headers_mut().append(
+                axum::http::header::ACCESS_CONTROL_ALLOW_ORIGIN.as_str(),
+                origin.parse().unwrap(),
+            );
             response.headers_mut().append(
                 axum::http::header::ACCESS_CONTROL_ALLOW_HEADERS.as_str(),
                 "Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,X-Data-Type,X-Requested-With,X-Data-Type,X-Auth-Token,header,clientParams,platform,client,Content-Disposition".parse().unwrap(),

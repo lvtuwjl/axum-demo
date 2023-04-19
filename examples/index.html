@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id='demo'></div>
+
+<script>
+    fetch("http://127.0.0.1:3000/article?title=夏天", {
+        mode: 'cors',
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('demo').innerHTML = data.data.content
+            console.log(data.data.content)
+        })
+</script>
+
+
+</body>
+</html>
