@@ -29,7 +29,7 @@ pub async fn get_user(Form(gu): Form<GetUser>) -> impl IntoResponse {
 
     // let user = db.get(gu.phone.as_bytes()).unwrap().unwrap().to_vec();
 
-    let u: User = serde_json::from_slice(&user.unwrap().unwrap().to_vec()).unwrap();
+    let u: User = serde_json::from_slice(&user.unwrap().unwrap().as_ref()).unwrap();
     debug!("get_user service {}", "get_user");
 
     let resp = Response::new(200, "OK".to_string(), Some(u));
