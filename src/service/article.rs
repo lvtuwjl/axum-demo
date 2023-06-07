@@ -5,16 +5,16 @@ use axum::{http::StatusCode, response::IntoResponse, Form, Json, Router};
 use chrono::Local;
 use serde::{Deserialize, Serialize};
 
-pub async fn search(Form(ga): Form<GetArticle>) -> impl IntoResponse {
+pub async fn search(Form(query): Form<GetArticle>) -> impl IntoResponse {
     let db: sled::Db = sled::open("./db/article_db").unwrap();
-    let article = db.get(ga.title.as_bytes());
+    let article = db.get(query.title.as_bytes());
     if let Ok(None) = article {
         let resp = Response::new(500, String::from("文章不存在"), None);
         return Response::failed(resp);
     }
 
-    let u: Article = serde_json::from_slice(&article.unwrap().unwrap().to_vec()).unwrap();
-    let resp = Response::new(200, "OK".to_string(), Some(u));
+    let article: Article = serde_json::from_slice(&article.unwrap().unwrap().as_ref()).unwrap();
+    let resp = Response::new(200, "OK".to_string(), Some(article));
 
     (StatusCode::OK, Json(resp))
 }
