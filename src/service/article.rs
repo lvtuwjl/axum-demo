@@ -37,8 +37,8 @@ pub async fn create(Json(payload): Json<CreateArticle>) -> impl IntoResponse {
         updated: Local::now().timestamp(),
     };
 
-    let b = serde_json::to_vec(&article).unwrap();
-    db.insert(article.title.as_bytes(), b).unwrap();
+    let value = serde_json::to_vec(&article).unwrap();
+    db.insert(article.title.as_bytes(), value).unwrap();
     let res = Response::new(200, String::from("OK"), Some(article));
     (StatusCode::OK, Json(res))
 }
