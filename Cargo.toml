@@ -50,7 +50,7 @@ version = "4.1.4"
 version = "0.4.3"
 
 [dependencies.axum]
-version = "0.6.12"
+version = "0.6.18"
 
 [dependencies.tower-http]
 version = "0.4.0"
@@ -66,21 +66,21 @@ version = "0.10.6"
 version = "0.34.7"
 
 [dependencies.serde]
-version = "1.0.152"
+version = "1.0.167"
 features = ["derive"]
 
 [dependencies.serde_json]
-version = "1.0.91"
+version = "1.0.100"
 
 [dependencies.tokio]
-version = "1.25.0"
+version = "1.29.1"
 features = ["full"]
 
 [dependencies.futures]
 version = "0.3.25"
 
 [dependencies.reqwest]
-version = "0.11.14"
+version = "0.11.18"
 features = ["json"]
 
 [dependencies.env_logger]
@@ -90,7 +90,7 @@ version = "0.10.0"
 version = "0.3.17"
 
 [dependencies.log]
-version = "0.4.17"
+version = "0.4.19"
 features = ["kv_unstable_serde"]
 
 [dependencies.chrono]
