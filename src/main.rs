@@ -33,3 +33,9 @@ async fn main() -> Result<()> {
 
     Ok(())
 }
+
+fn global_db() -> &'static sled::Db {
+    use std::sync::OnceLock;
+    static INSTANCE: OnceLock<sled::Db> = OnceLock::new();
+    INSTANCE.get_or_init(|| sled::open("./db/user_db").unwrap())
+}

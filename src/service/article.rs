@@ -1,4 +1,5 @@
 use crate::error::Error;
+use crate::global_db;
 use crate::response::response::Response;
 use crate::util::uuid::uuid;
 use axum::{http::StatusCode, response::IntoResponse, Form, Json, Router};
@@ -6,8 +7,7 @@ use chrono::Local;
 use serde::{Deserialize, Serialize};
 
 pub async fn search(Form(query): Form<GetArticle>) -> impl IntoResponse {
-    let db: sled::Db = sled::open("./db/article_db").unwrap();
-    let article = db.get(query.title.as_bytes());
+    let article = global_db().get(query.title.as_bytes());
     if let Ok(None) = article {
         let resp = Response::new(500, String::from("文章不存在"), None);
         return Response::failed(resp);
@@ -20,8 +20,7 @@ pub async fn search(Form(query): Form<GetArticle>) -> impl IntoResponse {
 }
 
 pub async fn create(Json(payload): Json<CreateArticle>) -> impl IntoResponse {
-    let db: sled::Db = sled::open("./db/article_db").unwrap();
-    if let Ok(Some(_)) = db.get(payload.title.as_bytes()) {
+    if let Ok(Some(_)) = global_db().get(payload.title.as_bytes()) {
         error!("文章已存在");
         let err = Error::new(500, String::from("文章已存在"));
         let res = Response::from(err);
@@ -38,7 +37,7 @@ pub async fn create(Json(payload): Json<CreateArticle>) -> impl IntoResponse {
     };
 
     let value = serde_json::to_vec(&article).unwrap();
-    db.insert(article.title.as_bytes(), value).unwrap();
+    global_db().insert(article.title.as_bytes(), value).unwrap();
     let res = Response::new(200, String::from("OK"), Some(article));
     (StatusCode::OK, Json(res))
 }

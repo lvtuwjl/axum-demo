@@ -1,4 +1,5 @@
 use crate::error::Error;
+use crate::global_db;
 use crate::response::response::Response;
 use crate::util::uuid::uuid;
 use axum::{http::StatusCode, response::IntoResponse, Form, Json, Router};
@@ -11,10 +12,8 @@ pub async fn root() -> &'static str {
 }
 
 pub async fn get_user(Form(gu): Form<GetUser>) -> impl IntoResponse {
-    let db: sled::Db = sled::open("./db/user_db").unwrap();
-
     // get
-    let user = db.get(gu.phone.as_bytes());
+    let user = global_db().get(gu.phone.as_bytes());
     if let Ok(None) = user {
         let resp = Response::new(500, String::from("此账号不存在"), None);
         // let resp = Response {
@@ -47,10 +46,8 @@ pub async fn create_user(
     // as JSON into a `CreateUser` type
     Json(payload): Json<CreateUser>,
 ) -> impl IntoResponse {
-    let db: sled::Db = sled::open("./db/user_db").unwrap();
-
     // first 查询当前手机号是否已经注册过 已注册直接返回注册
-    if let Ok(Some(_)) = db.get(payload.phone.as_bytes()) {
+    if let Ok(Some(_)) = global_db().get(payload.phone.as_bytes()) {
         error!("手机号已注册");
         let err = Error::new(500, String::from("手机号已注册"));
         let res = Response::from(err);
@@ -74,13 +71,10 @@ pub async fn create_user(
         updated: Local::now().timestamp(),
     };
 
-    // println!("11:{}","create");
-
-    // let db: sled::Db = sled::open("./db/user_db").unwrap();
     let b = serde_json::to_vec(&user).unwrap();
 
     // insert phone as key
-    db.insert(user.phone.as_bytes(), b).unwrap();
+    global_db().insert(user.phone.as_bytes(), b).unwrap();
     // this will be converted into a JSON response
     // with a status code of `201 Created`
 
