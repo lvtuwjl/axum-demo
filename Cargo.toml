@@ -111,6 +111,9 @@ version = "0.6.0"
 version = "1.4.0"
 features = ["serde"]
 
+[dependencies.jsonwebtoken]
+version = "8.3.0"
+
 # test测试构建使用 cargo build不会使用此依赖包
 [dev-dependencies.hmac-sha256]
 version = "1.1.6"
