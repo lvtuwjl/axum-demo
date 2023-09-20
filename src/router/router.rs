@@ -35,6 +35,7 @@ pub async fn start(port: &str) {
 
     // nest 嵌套路由
     let app = Router::new()
+        .route("/sign", post(signin)) // 登录接口
         .nest("", nested)
         // .route_layer(from_fn(options)) // OPTIONS预检请求
         .route_layer(from_fn(cors)); // CORS跨域方案

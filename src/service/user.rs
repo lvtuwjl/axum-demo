@@ -1,7 +1,7 @@
-use crate::error::Error;
 use crate::global_db;
 use crate::response::response::Response;
 use crate::util::uuid::uuid;
+use crate::{error::Error, middleware::jwt::generate};
 use axum::{http::StatusCode, response::IntoResponse, Form, Json, Router};
 use chrono::Local;
 use serde::{Deserialize, Serialize};
@@ -11,11 +11,44 @@ pub async fn root() -> &'static str {
     "Hello, World!"
 }
 
+// signin
+pub async fn signin(Json(payload): Json<Signin>) -> impl IntoResponse {
+    let user = global_db().get(payload.phone.as_bytes());
+
+    match user {
+        Err(_) => {
+            let resp = Response::new(500, String::from("请求失败"), None);
+            return Response::failed(resp);
+        }
+        Ok(None) => {
+            error!("Phone: {}, 账号不存在或密码错误", payload.phone);
+            let err = Error::new(500, String::from("账号不存在或密码错误"));
+            let res = Response::from(err);
+            return (StatusCode::OK, Json(res));
+        }
+        Ok(Some(info)) => {
+            let u: User = serde_json::from_slice(info.as_ref()).unwrap();
+            // 校验密码是否正确
+            if payload.password != u.password {
+                let err = Error::new(500, String::from("账号不存在或密码错误"));
+                let res = Response::from(err);
+                return (StatusCode::OK, Json(res));
+            }
+
+            // 登陆成功 下发token
+            let token = generate().unwrap();
+            let resp = SigninResp { id: u.id, token };
+            let res = Response::new(200, String::from("OK"), Some(resp));
+            (StatusCode::OK, Json(res))
+        }
+    }
+}
+
 pub async fn get_user(Form(gu): Form<GetUser>) -> impl IntoResponse {
     // get
     let user = global_db().get(gu.phone.as_bytes());
     if let Ok(None) = user {
-        let resp = Response::new(500, String::from("此账号不存在"), None);
+        let resp = Response::new(500, String::from("账号不存在"), None);
         // let resp = Response {
         //     code: 200,
         //     message: String::from("此账号不存在"),
@@ -85,6 +118,19 @@ pub async fn create_user(
     //     data: Some(user),
     // };
     (StatusCode::OK, Json(res))
+}
+
+#[derive(Deserialize)]
+pub struct Signin {
+    phone: String,
+    password: String,
+}
+
+// the output to our `create_user` handler
+#[derive(Serialize, Deserialize)]
+pub struct SigninResp {
+    id: String,
+    token: String,
 }
 
 // the input to our `get_user` handler
