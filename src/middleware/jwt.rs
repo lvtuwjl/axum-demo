@@ -63,7 +63,7 @@ pub fn validate(token: String) -> Result<()> {
         &Validation::new(Algorithm::HS256),
     )?;
 
-    println!("token data:\n{:#?}", &token_data);
+    debug!("token data:\n{:#?}", &token_data);
     Ok(())
 }
 

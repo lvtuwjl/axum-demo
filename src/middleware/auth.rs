@@ -4,6 +4,8 @@ use axum::{
     http::{header, request::Parts, StatusCode},
 };
 
+use super::jwt::validate;
+
 // An extractor that performs authorization.
 pub struct Auth;
 
@@ -22,14 +24,11 @@ where
 
         match auth_header {
             Some(auth_header) if token_is_valid(auth_header) => Ok(Self),
-            // _ => Err(StatusCode::UNAUTHORIZED),
-            _ => Ok(Self),
+            _ => Err(StatusCode::UNAUTHORIZED),
         }
     }
 }
 
 fn token_is_valid(token: &str) -> bool {
-    // ...
-    // false
-    true
+    validate(token.to_string()).is_ok()
 }

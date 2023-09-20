@@ -184,26 +184,24 @@ pub fn init() {
         //         visitor.kvs,
         //     )
         // })
-        .format(|buf, record| {
-            let mut visitor = JsonKvUnstableVisitor {
-                kvs: BTreeMap::new(),
-            };
-            record.key_values().visit(&mut visitor);
-
-            let output = serde_json::json!({
-                "time": Local::now().format("%FT%T%.6fZ").to_string(),
-                "level":record.level(),
-                "caller":format!("{}:{}",record.file().unwrap(),record.line().unwrap()),
-                "target":record.module_path().unwrap_or("<unnamed>"),
-                "msg":record.args(),
-                "fields":serde_json::json!(visitor.kvs),
-            });
-
-            write!(buf, "{}\n", output)
-        })
+        // .format(|buf, record| {
+        //     let mut visitor = JsonKvUnstableVisitor {
+        //         kvs: BTreeMap::new(),
+        //     };
+        //     record.key_values().visit(&mut visitor);
+        //     let output = serde_json::json!({
+        //         "time": Local::now().format("%FT%T%.6fZ").to_string(),
+        //         "level":record.level(),
+        //         "caller":format!("{}:{}",record.file().unwrap(),record.line().unwrap()),
+        //         "target":record.module_path().unwrap_or("<unnamed>"),
+        //         "msg":record.args(),
+        //         "fields":serde_json::json!(visitor.kvs),
+        //     });
+        //     write!(buf, "{}\n", output)
+        // })
         .init();
 
-    info!("key1" = "value1","key2" = as_serde!(vec![3,5,6,7]);"env_logger initialized.");
+    info!("env_logger initialized.");
 }
 
 /// kv_unstable log features to version = "0.4.17"
