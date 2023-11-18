@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  axum-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: axum-demo:latest
+    restart: always
+    container_name: axum-demo
+    ports:
+      - "8087:8087"
