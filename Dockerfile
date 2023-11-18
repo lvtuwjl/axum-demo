@@ -4,6 +4,8 @@ LABEL authors="wjl"
 WORKDIR /app
 COPY . .
 
+RUN apt-get update && apt-get install musl musl-dev musl-tools
+
 RUN mkdir ~/.cargo/ && touch ~/.cargo/config \
     && echo '[source.crates-io]' > ~/.cargo/config \
     && echo 'registry = "https://github.com/rust-lang/crates.io-index"'  >> ~/.cargo/config \
