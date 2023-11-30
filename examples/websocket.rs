@@ -7,11 +7,11 @@ fn main() {
     for stream in server.incoming() {
         thread::spawn(move || {
             let mut ws = accept(stream.unwrap()).unwrap();
-            loop{
+            loop {
                 let msg = ws.read().unwrap();
 
                 // We do not want to send back ping/pong messages.
-                if msg.is_binary()||msg.is_text(){
+                if msg.is_binary() || msg.is_text() {
                     ws.send(msg).unwrap();
                 }
             }

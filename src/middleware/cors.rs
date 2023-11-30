@@ -1,5 +1,6 @@
 // use async_trait::async_trait;
-use axum::http::{Method, Request, StatusCode};
+use axum::extract::Request;
+use axum::http::{Method, /*Request,*/ StatusCode};
 use axum::middleware::{self, Next};
 use axum::response::Response;
 use axum::routing::MethodFilter;
@@ -8,7 +9,7 @@ use axum::{
     http::{header, request::Parts},
 };
 
-pub async fn cors<B>(req: Request<B>, next: Next<B>) -> Response {
+pub async fn cors(req: Request, next: Next) -> Response {
     debug!("cors middleware {}", "cors");
 
     let headers = req.headers().clone();
@@ -68,7 +69,7 @@ fn origin_is_valid(origin: &str) -> bool {
     true
 }
 
-pub async fn options<B>(req: Request<B>, next: Next<B>) -> Result<Response, StatusCode> {
+pub async fn options(req: Request, next: Next) -> Result<Response, StatusCode> {
     // let auth_header = req.headers()
     //     .get(axum::http::header::AUTHORIZATION)
     //     .and_then(|header| header.to_str().ok());
