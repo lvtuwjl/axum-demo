@@ -40,6 +40,10 @@ crate-type = ["cdylib", "rlib"]
 #[dependencies.tracing-appender]
 #version = "0.2.2"
 
+[dependencies.diesel]
+version = "2.1.4"
+features = ["mysql"]
+
 [dependencies.failure]
 version = "0.1.8"
 

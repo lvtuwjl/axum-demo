@@ -22,6 +22,7 @@ pub type Result<T> = std::result::Result<T, failure::Error>;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    service::download::get_hm();
     // 初始化日志
     // let _guard = logger::init();
     logger::init();
