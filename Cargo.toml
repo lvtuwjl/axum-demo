@@ -40,9 +40,15 @@ crate-type = ["cdylib", "rlib"]
 #[dependencies.tracing-appender]
 #version = "0.2.2"
 
+[dependencies.sqlx]
+version = "0.7.3"
+features = ["runtime-tokio","tls-rustls","mysql","chrono"]
+optional = true
+
 [dependencies.diesel]
 version = "2.1.4"
 features = ["mysql","chrono"]
+optional = true
 
 [dependencies.failure]
 version = "0.1.8"
@@ -134,6 +140,13 @@ version = "1.1.6"
 
 [dev-dependencies.serde_repr]
 version = "0.1.10"
+
+
+[features]
+
+sqlx=["dep:sqlx"]
+diesel=["dep:diesel"]
+default =[]
 
 [profile.dev]
 #opt-level = 2
