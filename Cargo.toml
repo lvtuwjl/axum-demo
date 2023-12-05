@@ -42,7 +42,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies.diesel]
 version = "2.1.4"
-features = ["mysql"]
+features = ["mysql","chrono"]
 
 [dependencies.failure]
 version = "0.1.8"

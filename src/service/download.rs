@@ -1,8 +1,9 @@
+use chrono::NaiveDateTime;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
-use std::env;
-use std::io::{stdin, Read};
-use std::time::SystemTime;
+// use futures::StreamExt;
+// use std::env;
+// use std::io::{stdin, Read};
 
 pub fn establish_connection() -> MysqlConnection {
     // DATABASE_URL=mysql://root:123456@127.0.0.1/asm
@@ -12,39 +13,46 @@ pub fn establish_connection() -> MysqlConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-#[derive(Queryable, Selectable,Debug)]
-#[diesel(table_name = self::hm)]
-// #[diesel(table_name = hms)]
-pub struct Hm {
-    pub id: i64,
-    pub name: String,
-    // pub created_at: SystemTime,
-    // pub updated_at: SystemTime,
-    // pub deleted_at: SystemTime,
-}
-
 pub fn get_hm() {
     let connection = &mut establish_connection();
 
     use self::hm::dsl::*;
-    // let result = hm.first::<Hm>(connection);
-    let result = hm.
-        select(name).first::<String>(connection)
+    let result = hm
+        // .select(Hm::as_select())
+        // .select(created_at).first::<NaiveDateTime>(connection)
         // filter(name.eq())
-        // .limit(2).
-        // select(Hm::as_select())
-        // .load(connection)
+        // .limit(2)
+        // .select(Hm::as_select()).first::<String>(connection)
+        // .load::<(i32,String,NaiveDateTime)>(connection)
+        .load::<Hm>(connection)
         .expect("Error loading hm");
 
-    println!("result: {:?}", result);
+    println!("result: {:#?}", result);
 }
 
 table! {
-    hm (id) {
+    hm (id){
         id -> Integer,
-        name -> Varchar,
-        // created_at -> Datetime,
-        // updated_at -> Datetime,
-        // deleted_at -> Datetime,
+        name -> Nullable<Varchar>,
+        created_at -> Nullable<Datetime>,
+        updated_at -> Nullable<Datetime>,
+        deleted_at -> Nullable<Datetime>,
     }
+}
+
+// use diesel::deserialize::QueryableByName;
+// use diesel::backend::Backend;
+// use diesel::deserialize;
+// use diesel::row::NamedRow;
+
+#[derive(Queryable, Selectable, Debug)]
+// #[diesel(check_for_backend(diesel::mysql::Mysql))]
+// #[diesel(table_name = self::hm)]
+#[diesel(table_name = hm)]
+pub struct Hm {
+    pub id: i32,
+    pub name: Option<String>,
+    pub created_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
+    pub deleted_at: Option<NaiveDateTime>,
 }
