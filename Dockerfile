@@ -1,5 +1,5 @@
 FROM rust:latest as builder
-LABEL authors="wjl"
+LABEL authors="Jelly"
 
 WORKDIR /app
 COPY . .
@@ -16,14 +16,17 @@ RUN mkdir ~/.cargo/ && touch ~/.cargo/config \
     && echo 'git-fetch-with-cli = true'   >> ~/.cargo/config \
     && echo '' >> ~/.cargo/config
 
-RUN rustup target add x86_64-unknown-linux-musl
-RUN cargo build --release --target x86_64-unknown-linux-musl
+# RUN rustup target add x86_64-unknown-linux-musl
+# RUN cargo build --release --target x86_64-unknown-linux-musl
+
+RUN rustup target add aarch64-unknown-linux-musl
+RUN cargo build --release --target aarch64-unknown-linux-musl
 
 FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/axum-demo .
+COPY --from=builder /app/target/aarch64-unknown-linux-musl/release/axum-demo .
 
 EXPOSE 8087
 
