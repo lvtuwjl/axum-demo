@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
 pub async fn run_get() -> Result<(), reqwest::Error> {
-    let res = reqwest::get("https://dev-api.vland.live/wechat/js-sdk/sign").await?;
+    let res = reqwest::get("http://127.0.01:8080").await?;
     let body = res.text().await?;
     println!("body = {:?}", body);
 
