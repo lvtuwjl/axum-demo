@@ -60,7 +60,7 @@ pub fn validate(token: String) -> Result<()> {
     let token_data = jsonwebtoken::decode::<Claims>(
         &token,
         &DecodingKey::from_secret(SECRET.as_ref()),
-        &Validation::new(Algorithm::HS256),
+        &Validation::new(Algorithm::HS512),
     )?;
 
     debug!("token data:\n{:#?}", &token_data);
